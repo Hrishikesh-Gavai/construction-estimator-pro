@@ -15,7 +15,7 @@ Construction Estimator Pro is a Flask-based application that analyzes DXF archit
 
 ## 📽️ Demo
 
-https://github.com/user-attachments/assets/92c5a649-9f08-43b0-a2e5-117f8d49e3c8
+
 
 ## 📂 Project Structure
 
