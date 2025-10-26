@@ -40,33 +40,25 @@ git clone https://github.com/yourusername/construction-estimator-pro.git
 cd construction-estimator-pro
 ```
 
-### 2. Create Virtual Environment & Install Dependencies
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 3. Prepare Data
+### 2. Prepare Data
 
 * Place **DXF files** inside `data/raw/architectural` or `data/raw/structural`.
 * Place **Rates.xlsx** inside `data/rates/`.
 * Place **Architectural Plan.xlsx** and **Structural Plan.xlsx** inside `data/plans/`.
 
-### 4. Generate Training Data
+### 3. Generate Training Data
 
 ```bash
 python data_preparer.py
 ```
 
-### 5. Train Models
+### 4. Train Models
 
 ```bash
 python train_models.py
 ```
 
-### 6. Run Application
+### 5. Run Application
 
 ```bash
 python app.py
