@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConstructAI Pro - AI Construction Estimation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #4a5568;
+            --accent: #c05621;
+            --success: #38a169;
+            --border: #e2e8f0;
+            --dark: #2d3748;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f7fafc;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .calculating-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(26, 54, 93, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+        
+        .calculating-content {
+            text-align: center;
+            max-width: 500px;
+            padding: 2rem;
+        }
+        
+        .calculating-content i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+        }
+        
+        .calculating-content h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .calculating-content p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress {
+            height: 100%;
+            width: 0%;
+            background-color: #c05621;
+            border-radius: 4px;
+            animation: progressAnimation 3s infinite;
+        }
+        
+        @keyframes progressAnimation {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        .hero-section {
+            background-image: linear-gradient(rgba(26, 54, 93, 0.9), rgba(26, 54, 93, 0.9)), url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 4rem 0;
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-content h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .upload-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .upload-area {
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            background-color: #fafafa;
+        }
+        
+        .upload-area:hover {
+            border-color: #1a365d;
+            background-color: #f0f4f8;
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area h3 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .upload-area p {
+            color: #4a5568;
+        }
+        
+        .file-info {
+            background: #38a169;
+            color: white;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background-color: #1a365d;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2d3748;
+        }
+        
+        .submit-btn:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+        
+        .converter-section {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .converter-btn {
+            display: inline-block;
+            background-color: #c05621;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+        
+        .converter-btn:hover {
+            background-color: #9c4221;
+        }
+        
+        .converter-note {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+        
+        .features-section {
+            text-align: center;
+            margin: 4rem 0;
+        }
+        
+        .features-section h2 {
+            color: #2d3748;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #1a365d;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .feature-card p {
+            color: #4a5568;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculating-screen" id="calculatingScreen">
+        <div class="calculating-content">
+            <i class="fas fa-calculator"></i>
+            <h2>Analyzing Your Construction Plans</h2>
+            <p>Our AI is processing your DXF file to generate accurate material and cost estimates.</p>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <p>This may take a few moments...</p>
+        </div>
+    </div>
+
+    <div class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1>AI-Powered Construction Estimation</h1>
+                <p>Upload your DXF files for instant material and cost estimates with professional accuracy</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="upload-section">
+            <div class="upload-card">
+                <form action="/predict" method="post" enctype="multipart/form-data" id="uploadForm">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Drop your DXF file here</h3>
+                        <p>Supported: Architectural & Structural plans (Max: 50MB)</p>
+                        <input type="file" name="file" id="fileInput" accept=".dxf" required>
+                    </div>
+                    
+                    <div id="fileInfo" class="file-info"></div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-calculator"></i> Generate Estimate
+                    </button>
+                </form>
+                
+                <div class="converter-section">
+                    <a href="https://cad.online-convert.com/convert/dwg-to-dxf" target="_blank" class="converter-btn">
+                        <i class="fas fa-exchange-alt"></i> DWG to DXF Converter
+                    </a>
+                    <p class="converter-note">Need to convert DWG to DXF? Use our recommended converter tool</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2>Why Choose ConstructAI Pro?</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Instant Results</h3>
+                    <p>Get accurate estimates in seconds, not days</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Precision Analytics</h3>
+                    <p>AI-powered analysis for precise material calculations</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Professional Grade</h3>
+                    <p>Trusted by construction professionals worldwide</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const uploadForm = document.getElementById('uploadForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const calculatingScreen = document.getElementById('calculatingScreen');
+            
+            function showCalculatingScreen() {
+                calculatingScreen.style.display = 'flex';
+            }
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', function(e) {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    if (file.size > 50 * 1024 * 1024) {
+                        alert('File size must be less than 50MB');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    fileInfo.innerHTML = `
+                        <i class="fas fa-file"></i> Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                    `;
+                    fileInfo.style.display = 'block';
+                    uploadArea.style.borderColor = '#38a169';
+                    uploadArea.style.background = '#f0fff4';
+                }
+            });
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#1a365d';
+                uploadArea.style.background = '#f0f4f8';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = '#e2e8f0';
+                uploadArea.style.background = '#fafafa';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].name.toLowerCase().endsWith('.dxf')) {
+                    fileInput.files = files;
+                    fileInput.dispatchEvent(new Event('change'));
+                } else {
+                    alert('Please drop a valid DXF file');
+                }
+            });
+            
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!fileInput.files.length) {
+                    alert('Please select a DXF file first');
+                    return;
+                }
+                
+                showCalculatingScreen();
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                setTimeout(() => {
+                    this.submit();
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

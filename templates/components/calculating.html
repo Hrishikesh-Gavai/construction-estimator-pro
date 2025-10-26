@@ -1,0 +1,217 @@
+<!-- Calculating Screen -->
+<div id="calculatingScreen" class="calculating-screen">
+    <div class="calculating-content">
+        <div class="calculating-header">
+            <div class="calculating-spinner">
+                <i class="fas fa-hard-hat"></i>
+            </div>
+            <h2>Processing Your File</h2>
+            <p>Analyzing DXF features and generating estimate...</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-text">0%</div>
+        </div>
+        
+        <div class="calculating-steps">
+            <div class="step active">
+                <div class="step-icon">1</div>
+                <div class="step-text">Analyzing DXF file structure...</div>
+            </div>
+            <div class="step">
+                <div class="step-icon">2</div>
+                <div class="step-text">Extracting architectural features...</div>
+            </div>
+            <div class="step">
+                <div class="step-icon">3</div>
+                <div class="step-text">Calculating material quantities...</div>
+            </div>
+            <div class="step">
+                <div class="step-icon">4</div>
+                <div class="step-text">Estimating construction costs...</div>
+            </div>
+            <div class="step">
+                <div class="step-icon">5</div>
+                <div class="step-text">Generating final report...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.calculating-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(26, 54, 93, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.calculating-screen.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.calculating-content {
+    background: white;
+    padding: 3rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    width: 90%;
+    border: 1px solid var(--border);
+}
+
+.calculating-header {
+    margin-bottom: 2rem;
+}
+
+.calculating-spinner {
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.calculating-spinner i {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.calculating-content h2 {
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.calculating-content p {
+    color: var(--secondary);
+}
+
+.progress-container {
+    margin: 2rem 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--success);
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    text-align: right;
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+.calculating-steps {
+    text-align: left;
+    margin-top: 2rem;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--secondary);
+}
+
+.step.active .step-icon {
+    background: var(--success);
+    color: white;
+}
+
+.step-text {
+    color: var(--dark);
+    font-weight: 500;
+}
+</style>
+
+<script>
+function showCalculatingScreen() {
+    const calculatingScreen = document.getElementById('calculatingScreen');
+    calculatingScreen.classList.add('show');
+    
+    // Animate progress bar
+    const progressFill = document.querySelector('.progress-fill');
+    const progressText = document.querySelector('.progress-text');
+    let progress = 0;
+    
+    const progressInterval = setInterval(() => {
+        progress += 5;
+        if (progress <= 100) {
+            progressFill.style.width = progress + '%';
+            progressText.textContent = progress + '%';
+        } else {
+            clearInterval(progressInterval);
+        }
+    }, 200);
+    
+    // Animate calculation steps
+    const steps = document.querySelectorAll('.step');
+    let currentStep = 0;
+    
+    const stepInterval = setInterval(() => {
+        if (currentStep > 0) {
+            steps[currentStep - 1].classList.remove('active');
+        }
+        
+        if (currentStep < steps.length) {
+            steps[currentStep].classList.add('active');
+            currentStep++;
+        } else {
+            clearInterval(stepInterval);
+        }
+    }, 800);
+}
+
+function hideCalculatingScreen() {
+    const calculatingScreen = document.getElementById('calculatingScreen');
+    calculatingScreen.classList.remove('show');
+}
+</script>

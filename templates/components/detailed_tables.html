@@ -1,0 +1,451 @@
+<div class="detailed-results">
+    <!-- Project Summary -->
+    <div class="summary-section">
+        <div class="section-header">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>Project Summary</h3>
+        </div>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <span class="label">Project Type:</span>
+                <span class="value plan-type-badge">{{ estimate.plan_type|title }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">File Name:</span>
+                <span class="value">{{ estimate.file_name }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Estimation Method:</span>
+                <span class="value">{{ estimate.estimation_method if estimate.estimation_method else 'Rule-based' }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Total Area:</span>
+                <span class="value">{{ "%.2f"|format(estimate.features.total_area if estimate.plan_type == 'architectural' else estimate.features.slab_area) }} sq.ft</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Material Quantities Table -->
+    <div class="materials-section detailed-section">
+        <div class="section-header">
+            <i class="fas fa-cubes"></i>
+            <h3>Detailed Material Quantities</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="detailed-table">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Quantity</th>
+                        <th>Unit</th>
+                        <th>Rate (₹)</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if estimate.plan_type == 'structural' %}
+                    <!-- Structural Materials -->
+                    <tr class="category-header">
+                        <td colspan="5"><strong>Concrete & Structural</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Concrete (M25 Grade)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Concrete', 0)) }}</td>
+                        <td>m³</td>
+                        <td>₹5,500</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Concrete', 0) * 5500) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Steel Reinforcement (Fe500)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Steel Reinforcement', estimate.quantities.get('Steel', 0))) }}</td>
+                        <td>kg</td>
+                        <td>₹80</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Steel Reinforcement', estimate.quantities.get('Steel', 0)) * 80) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Cement (OPC 53 Grade)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Cement', 0)) }}</td>
+                        <td>bags</td>
+                        <td>₹400</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Cement', 0) * 400) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Coarse Aggregate (20mm)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Coarse Aggregate', estimate.quantities.get('Aggregate', 0)) * 0.5) }}</td>
+                        <td>m³</td>
+                        <td>₹2,800</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Coarse Aggregate', estimate.quantities.get('Aggregate', 0)) * 0.5 * 2800) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Coarse Aggregate (10mm)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Coarse Aggregate', estimate.quantities.get('Aggregate', 0)) * 0.5) }}</td>
+                        <td>m³</td>
+                        <td>₹3,000</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Coarse Aggregate', estimate.quantities.get('Aggregate', 0)) * 0.5 * 3000) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sand (M-Sand)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Sand', 0)) }}</td>
+                        <td>m³</td>
+                        <td>₹5,250</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Sand', 0) * 5250) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Binding Wire</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Binding Wire', 0)) }}</td>
+                        <td>kg</td>
+                        <td>₹90</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Binding Wire', 0) * 90) }}</td>
+                    </tr>
+                    
+                    <tr class="category-header">
+                        <td colspan="5"><strong>Formwork & Shuttering</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Formwork Area</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Formwork', 0)) }}</td>
+                        <td>m²</td>
+                        <td>₹150</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Formwork', 0) * 150) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Shuttering Plywood</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Formwork', 0) * 0.15) }}</td>
+                        <td>m²</td>
+                        <td>₹1,250</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Formwork', 0) * 0.15 * 1250) }}</td>
+                    </tr>
+                    
+                    {% else %}
+                    <!-- Architectural Materials -->
+                    <tr class="category-header">
+                        <td colspan="5"><strong>Masonry Work</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Red Bricks</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Bricks', 0)) }}</td>
+                        <td>pieces</td>
+                        <td>₹10</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Bricks', 0) * 10) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Cement (for Masonry)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Cement', 0) * 0.3) }}</td>
+                        <td>bags</td>
+                        <td>₹400</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Cement', 0) * 0.3 * 400) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sand (for Masonry)</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Sand', 0) * 0.4) }}</td>
+                        <td>m³</td>
+                        <td>₹7,500</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Sand', 0) * 0.4 * 7500) }}</td>
+                    </tr>
+                    
+                    <tr class="category-header">
+                        <td colspan="5"><strong>Finishes</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Ceramic Tiles</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Tiles', 0)) }}</td>
+                        <td>m²</td>
+                        <td>₹60</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Tiles', 0) * 60) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Wall Paint</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Paint', 0)) }}</td>
+                        <td>liters</td>
+                        <td>₹300</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Paint', 0) * 300) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tile Adhesive</td>
+                        <td>{{ "%.2f"|format(estimate.quantities.get('Tiles', 0) * 4) }}</td>
+                        <td>kg</td>
+                        <td>₹15</td>
+                        <td>₹{{ "%.2f"|format(estimate.quantities.get('Tiles', 0) * 4 * 15) }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Cost Breakdown Table -->
+    <div class="costs-section detailed-section">
+        <div class="section-header">
+            <i class="fas fa-money-bill-wave"></i>
+            <h3>Detailed Cost Breakdown</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="detailed-table">
+                <thead>
+                    <tr>
+                        <th>Cost Category</th>
+                        <th>Description</th>
+                        <th>Amount (₹)</th>
+                        <th>% of Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total_cost = estimate.total_cost %}
+                    {% for item, cost in estimate.costs.items() %}
+                    <tr>
+                        <td>{{ item.replace('_', ' ').title() }}</td>
+                        <td class="description">
+                            {% if 'cement' in item.lower() %}Cement & binding material
+                            {% elif 'steel' in item.lower() %}Steel reinforcement
+                            {% elif 'aggregate' in item.lower() %}Coarse aggregate
+                            {% elif 'sand' in item.lower() %}Fine aggregate & sand
+                            {% elif 'formwork' in item.lower() %}Shuttering & formwork
+                            {% elif 'labor' in item.lower() %}Labor charges
+                            {% elif 'concrete' in item.lower() %}Concrete work
+                            {% else %}Construction material{% endif %}
+                        </td>
+                        <td>₹{{ "{:,.2f}".format(cost) }}</td>
+                        <td>{{ "%.1f"|format((cost / total_cost) * 100) }}%</td>
+                    </tr>
+                    {% endfor %}
+                    
+                    <!-- Summary Rows -->
+                    <tr class="subtotal-row">
+                        <td colspan="2"><strong>Subtotal (Materials & Labor)</strong></td>
+                        <td><strong>₹{{ "{:,.2f}".format(total_cost * 0.85) }}</strong></td>
+                        <td><strong>85.0%</strong></td>
+                    </tr>
+                    <tr class="additional-row">
+                        <td>Contractor Overhead</td>
+                        <td>Project management & supervision</td>
+                        <td>₹{{ "{:,.2f}".format(total_cost * 0.08) }}</td>
+                        <td>8.0%</td>
+                    </tr>
+                    <tr class="additional-row">
+                        <td>Profit Margin</td>
+                        <td>Contractor profit</td>
+                        <td>₹{{ "{:,.2f}".format(total_cost * 0.07) }}</td>
+                        <td>7.0%</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2"><strong>GRAND TOTAL</strong></td>
+                        <td><strong>₹{{ "{:,.2f}".format(total_cost) }}</strong></td>
+                        <td><strong>100.0%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Construction Timeline -->
+    <div class="timeline-section">
+        <div class="section-header">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>Estimated Construction Timeline</h3>
+        </div>
+        <div class="timeline-grid">
+            <div class="timeline-item">
+                <div class="phase">Phase 1</div>
+                <div class="task">Site Preparation & Foundation</div>
+                <div class="duration">15-20 days</div>
+            </div>
+            <div class="timeline-item">
+                <div class="phase">Phase 2</div>
+                <div class="task">Structural Work</div>
+                <div class="duration">30-45 days</div>
+            </div>
+            <div class="timeline-item">
+                <div class="phase">Phase 3</div>
+                <div class="task">Masonry & Finishes</div>
+                <div class="duration">25-35 days</div>
+            </div>
+            <div class="timeline-item">
+                <div class="phase">Total</div>
+                <div class="task">Complete Project</div>
+                <div class="duration">70-100 days</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.detailed-results {
+    margin: 2rem 0;
+}
+
+.summary-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.summary-item .label {
+    font-weight: 600;
+    color: var(--dark);
+    margin-right: 0.5rem;
+}
+
+.summary-item .value {
+    color: var(--secondary);
+}
+
+.plan-type-badge {
+    background: var(--accent);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.detailed-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+}
+
+.detailed-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.detailed-table th {
+    background: #1a365d;
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    border: none;
+}
+
+.detailed-table td {
+    padding: 0.875rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.detailed-table .category-header {
+    background: #f7fafc;
+    font-weight: 600;
+}
+
+.detailed-table .category-header td {
+    border-bottom: 2px solid var(--primary);
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.detailed-table .subtotal-row {
+    background: #f0fff4;
+    font-weight: 600;
+}
+
+.detailed-table .subtotal-row td {
+    border-top: 2px solid var(--success);
+}
+
+.detailed-table .additional-row {
+    background: #fffaf0;
+}
+
+.detailed-table .total-row {
+    background: #1a365d;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.detailed-table .total-row td {
+    border: none;
+}
+
+.detailed-table .description {
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+.timeline-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+}
+
+.timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.timeline-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+}
+
+.timeline-item .phase {
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.timeline-item .task {
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+
+.timeline-item .duration {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 1.1rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .timeline-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .detailed-table {
+        font-size: 0.85rem;
+    }
+    
+    .detailed-table th,
+    .detailed-table td {
+        padding: 0.5rem;
+    }
+}
+</style>

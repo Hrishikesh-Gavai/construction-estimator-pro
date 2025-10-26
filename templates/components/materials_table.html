@@ -1,0 +1,135 @@
+<div class="results-grid">
+    <div class="materials-section">
+        <div class="section-header">
+            <i class="fas fa-cubes"></i>
+            <h3>Material Quantities</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="materials-table">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Quantity</th>
+                        <th>Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material, quantity in estimate.quantities.items() %}
+                    <tr>
+                        <td>{{ material.split('(')[0] }}</td>
+                        <td>{{ "{:,.2f}".format(quantity) }}</td>
+                        <td>{{ material.split('(')[1].replace(')', '') if '(' in material else 'units' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="costs-section">
+        <div class="section-header">
+            <i class="fas fa-money-bill-wave"></i>
+            <h3>Cost Breakdown</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="costs-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Cost (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item, cost in estimate.costs.items() %}
+                    <tr>
+                        <td>{{ item }}</td>
+                        <td>₹{{ "{:,.2f}".format(cost) }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="total-row">
+                        <td><strong>Total Cost</strong></td>
+                        <td><strong>₹{{ "{:,.2f}".format(estimate.total_cost) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.materials-section, .costs-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-header i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.section-header h3 {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.materials-table, .costs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.materials-table th, .costs-table th {
+    background: #f7fafc;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--dark);
+    border-bottom: 2px solid var(--border);
+}
+
+.materials-table td, .costs-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.materials-table tr:hover, .costs-table tr:hover {
+    background-color: #f7fafc;
+}
+
+.total-row {
+    background: #f0fff4;
+    font-weight: 600;
+}
+
+.total-row td {
+    border-top: 2px solid var(--success);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
